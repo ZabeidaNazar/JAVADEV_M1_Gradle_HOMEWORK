@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.fatJar'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "org.fatJar.Main"
+    }
+
+    // set name
+    archivesBaseName = 'nazar'
+    archiveVersion = ""
+    //archiveExtension = ".zip"
+    //archiveFileName = "nazar.jar"
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    doLast {
+        if (archiveFileName.isPresent()) {
+            copy {
+                from "${rootDir}/build/libs/" + archiveFileName.get()
+                into "${rootDir}/distJar"
+            }
+        }
+    }
+}
+
+clean.doFirst {
+    delete "${rootDir}/distJar"
+}
